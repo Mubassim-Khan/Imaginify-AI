@@ -8,13 +8,14 @@ import { getUserImages } from "@/lib/actions/image.actions";
 import { getUserById } from "@/lib/actions/user.actions";
 
 const Profile = async ({ searchParams }: SearchParamProps) => {
-  const page = Number(searchParams?.page) || 1;
-  const { userId } = auth();
+  const { page } = await searchParams;
+  const pageNumber = Number(page) || 1;
+  const { userId } = await auth();
 
   if (!userId) redirect("/sign-in");
 
   const user = await getUserById(userId);
-  const images = await getUserImages({ page, userId: user._id });
+  const images = await getUserImages({ page: pageNumber, userId: user._id });
 
   return (
     <>
@@ -36,7 +37,9 @@ const Profile = async ({ searchParams }: SearchParamProps) => {
         </div>
 
         <div className="profile-image-manipulation">
-          <p className="p-14-medium md:p-16-medium">IMAGE TRANSFORMATIONS DONE</p>
+          <p className="p-14-medium md:p-16-medium">
+            IMAGE TRANSFORMATIONS DONE
+          </p>
           <div className="mt-4 flex items-center gap-4">
             <Image
               src="/assets/icons/photo.svg"
@@ -54,7 +57,7 @@ const Profile = async ({ searchParams }: SearchParamProps) => {
         <Collection
           images={images?.data}
           totalPages={images?.totalPages}
-          page={page}
+          page={pageNumber}
         />
       </section>
     </>

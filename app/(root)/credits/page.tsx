@@ -11,7 +11,7 @@ import { getUserById } from "@/lib/actions/user.actions";
 import Checkout from "@/components/shared/Checkout";
 
 const Credits = async () => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) redirect("/sign-in");
 
@@ -42,7 +42,8 @@ const Credits = async () => {
                 {plan.inclusions.map((inclusion) => (
                   <li
                     key={plan.name + inclusion.label}
-                    className="flex items-center gap-4">
+                    className="flex items-center gap-4"
+                  >
                     <Image
                       src={`/assets/icons/${
                         inclusion.isIncluded ? "check.svg" : "cross.svg"

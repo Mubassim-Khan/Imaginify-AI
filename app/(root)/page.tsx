@@ -6,9 +6,10 @@ import Link from "next/link";
 import React from "react";
 
 const Home = async ({ searchParams }: SearchParamProps) => {
-  const page = Number(searchParams?.page) || 1;
-  const searchQuery = (searchParams?.query as string) || "";
-  const images = await getAllImages({ page, searchQuery });
+  const { page, query } = await searchParams;
+  const pageNumber = Number(page) || 1;
+  const searchQuery = (query as string) || "";
+  const images = await getAllImages({ page: pageNumber, searchQuery });
 
   return (
     <>
@@ -21,7 +22,8 @@ const Home = async ({ searchParams }: SearchParamProps) => {
             <Link
               key={link.route}
               href={link.route}
-              className="flex-center flex-col gap-2">
+              className="flex-center flex-col gap-2"
+            >
               <li className="flex-center w-fit rounded-full bg-white p-4">
                 <Image src={link.icon} alt="image" width={24} height={24} />
               </li>
@@ -36,7 +38,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
           hasSearch={true}
           images={images?.data}
           totalPages={images?.totalPage}
-          page={page}
+          page={pageNumber}
         />
       </section>
     </>
