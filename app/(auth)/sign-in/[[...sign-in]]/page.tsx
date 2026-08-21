@@ -1,8 +1,7 @@
-import { SignIn } from '@clerk/nextjs'
-import React from 'react'
+import AuthScreen from "@/components/auth/AuthScreen";
 
 const SignInPage = () => {
-  return <SignIn />
+  return <AuthScreen mode="sign-in" />;
 }
 
-export default SignInPage
+export default SignInPage;

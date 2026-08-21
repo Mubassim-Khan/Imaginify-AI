@@ -51,7 +51,7 @@ This repository contains the code of a powerful AI SaaS platform, image manipula
 - [Shadcn](https://ui.shadcn.com/) - Open Source UI library
 - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/) - Cloud Database
 - [Stripe](https://stripe.com/) - Payment Processing Platform
-- [Clerk](https://clerk.com/) - Authentication & User management platform
+- [Auth.js](https://authjs.dev/) - Credentials authentication and server sessions
 - [Cloudinary](https://cloudinary.com/) - Cloud-based Image & Video management service
 - [Prettier](https://prettier.io/) - Code Formatter
 
@@ -82,15 +82,12 @@ NEXT_PUBLIC_SERVER_URL=
 #MONGODB
 MONGODB_URL=
 
-#CLERK
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-WEBHOOK_SECRET=
-
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+#AUTH.JS (generate with: npx auth secret)
+AUTH_SECRET=
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+AUTH_GITHUB_ID=
+AUTH_GITHUB_SECRET=
 
 #CLOUDINARY
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
@@ -103,7 +100,7 @@ STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 ```
 
-Replace the placeholder values with your actual respective account credentials. You can obtain these credentials by signing up on the [Clerk](https://clerk.com/), [MongoDB](https://www.mongodb.com/), [Cloudinary](https://cloudinary.com/) and [Stripe](https://stripe.com)
+Replace the placeholder values with your MongoDB, Cloudinary, and Stripe credentials. Auth.js credentials are stored securely in MongoDB using bcrypt password hashes.
 
 5. Run the project
 
@@ -113,7 +110,7 @@ npm run dev
 
 6. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-7. To view webhooks, refer to Stripe & Clerk documentation for Webhooks. [Stripe Documentation](https://docs.stripe.com/webhooks) [Clerk Documentation](https://clerk.com/docs/integrations/webhooks/overview)
+7. To configure payment webhooks, refer to the [Stripe documentation](https://docs.stripe.com/webhooks).
 
 ## <a name="license">License</a>
 

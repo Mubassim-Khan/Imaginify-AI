@@ -1,81 +1,59 @@
-import { SignedIn } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
-
-import Image from "next/image";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 
-import Header from "@/components/shared/Header";
-import { Button } from "@/components/ui/button";
+import CreditBalanceCard from "@/components/credits/CreditBalanceCard";
+import CreditPackCard from "@/components/credits/CreditPackCard";
 import { plans } from "@/constants";
 import { getUserById } from "@/lib/actions/user.actions";
-import Checkout from "@/components/shared/Checkout";
 
 const Credits = async () => {
-  const { userId } = await auth();
+  const session = await auth();
+  const userId = session?.user?.id;
 
   if (!userId) redirect("/sign-in");
 
   const user = await getUserById(userId);
 
   return (
-    <>
-      <Header
-        title="Buy Credits"
-        subtitle="Choose a credit package that suits your needs!"
-      />
+    <div className="space-y-10 pb-10">
+      <CreditBalanceCard balance={user.creditBalance} />
 
-      <section>
-        <ul className="credits-list">
-          {plans.map((plan) => (
-            <li key={plan.name} className="credits-item">
-              <div className="flex-center flex-col gap-3">
-                <Image src={plan.icon} alt="check" width={50} height={50} />
-                <p className="p-20-semibold mt-2 text-purple-500">
-                  {plan.name}
-                </p>
-                <p className="h1-semibold text-dark-600">Rs {plan.price}</p>
-                <p className="p-16-regular">{plan.credits} Credits</p>
-              </div>
+      <section aria-labelledby="credit-packs-title">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0876df]">
+              One-time purchase
+            </p>
+            <h2
+              id="credit-packs-title"
+              className="mt-2 text-3xl font-bold tracking-[-0.04em] text-[#17191c]"
+            >
+              Choose a credit pack
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-[#696d73]">
+              No recurring subscription. Buy only when your workspace needs
+              more transformations.
+            </p>
+          </div>
+          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/60 px-3.5 py-2 text-xs font-medium text-[#585d63] ring-1 ring-inset ring-white/80 backdrop-blur-xl">
+            <ShieldCheck className="size-4 text-[#0876df]" aria-hidden="true" />
+            Secure checkout with Stripe
+          </span>
+        </div>
 
-              {/* Inclusions */}
-              <ul className="flex flex-col gap-5 py-9">
-                {plan.inclusions.map((inclusion) => (
-                  <li
-                    key={plan.name + inclusion.label}
-                    className="flex items-center gap-4"
-                  >
-                    <Image
-                      src={`/assets/icons/${
-                        inclusion.isIncluded ? "check.svg" : "cross.svg"
-                      }`}
-                      alt="check"
-                      width={24}
-                      height={24}
-                    />
-                    <p className="p-16-regular">{inclusion.label}</p>
-                  </li>
-                ))}
-              </ul>
-
-              {plan.name === "Free" ? (
-                <Button variant="outline" className="credits-btn">
-                  Free Consumable
-                </Button>
-              ) : (
-                <SignedIn>
-                  <Checkout
-                    plan={plan.name}
-                    amount={plan.price}
-                    credits={plan.credits}
-                    buyerId={user._id}
-                  />
-                </SignedIn>
-              )}
-            </li>
+        <ul className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {plans.map((plan, index) => (
+            <CreditPackCard
+              key={plan.name}
+              plan={plan}
+              buyerId={user._id}
+              featured={index === 1}
+            />
           ))}
         </ul>
       </section>
-    </>
+    </div>
   );
 };
 

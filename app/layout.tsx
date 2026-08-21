@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import {
-  ClerkProvider,
-} from "@clerk/nextjs";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 
-const IBMPlex = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-ibm-plex",
+const inter = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "Imaginify AI",
-  description: "AI-powered image generator app",
+  title: "Imaginify — AI image editing for modern teams",
+  description: "Create, restore, and transform remarkable images with an AI creative workspace built for modern teams.",
 };
 
 export default function RootLayout({
@@ -23,14 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{
-      variables: { colorPrimary: '#624cf5' }
-    }}>
-      <html lang="en">
-        <body className={cn("font-IBMPlex antialiased", IBMPlex.variable)}>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={cn("antialiased", inter.variable)}>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
+    </html>
   );
 }

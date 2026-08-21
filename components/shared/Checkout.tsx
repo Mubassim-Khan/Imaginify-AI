@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 import { useToast } from "@/hooks/use-toast";
 import { checkoutCredits } from "@/lib/actions/transaction.actions";
+import { cn } from "@/lib/utils";
 
 import { Button } from "../ui/button";
 
@@ -13,11 +14,13 @@ const Checkout = ({
   amount,
   credits,
   buyerId,
+  featured = false,
 }: {
   plan: string;
   amount: number;
   credits: number;
   buyerId: string;
+  featured?: boolean;
 }) => {
   const { toast } = useToast();
 
@@ -33,7 +36,7 @@ const Checkout = ({
         title: "Order placed!",
         description: "You will receive an email confirmation",
         duration: 5000,
-        className: "success-toast",
+        className: "bg-green-100 text-green-900",
       });
     }
 
@@ -42,10 +45,10 @@ const Checkout = ({
         title: "Order canceled!",
         description: "Continue to shop around and checkout when you're ready",
         duration: 5000,
-        className: "error-toast",
+        className: "bg-red-100 text-red-900",
       });
     }
-  }, []);
+  }, [toast]);
 
   const onCheckout = async () => {
     const transaction = {
@@ -59,15 +62,17 @@ const Checkout = ({
   };
 
   return (
-    <form action={onCheckout} method="POST">
-      <section>
-        <Button
-          type="submit"
-          role="link"
-          className="w-full rounded-full bg-purple-gradient bg-cover">
-          Buy Credit
-        </Button>
-      </section>
+    <form action={onCheckout} method="POST" className="w-full">
+      <Button
+        type="submit"
+        role="link"
+        className={cn(
+          "h-12 w-full rounded-full bg-[#17191c] px-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(17,25,33,0.16)] transition duration-300 hover:bg-[#0876df] hover:shadow-[0_15px_32px_rgba(8,118,223,0.22)]",
+          featured && "bg-[#0876df] hover:bg-[#0068c8]",
+        )}
+      >
+        Buy {credits.toLocaleString()} credits
+      </Button>
     </form>
   );
 };

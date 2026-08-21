@@ -1,79 +1,48 @@
-import { auth } from "@clerk/nextjs/server";
-import Image from "next/image";
-import Link from "next/link";
-
-import Header from "@/components/shared/Header";
+import { auth } from "@/auth";
 import TransformedImage from "@/components/shared/TransformedImage";
-import { Button } from "@/components/ui/button";
+import OriginalImagePanel from "@/components/transformations/OriginalImagePanel";
+import TransformationDetailActions from "@/components/transformations/TransformationDetailActions";
+import TransformationMetadata from "@/components/transformations/TransformationMetadata";
+import TransformationPageHeader from "@/components/transformations/TransformationPageHeader";
+import { transformationTypes } from "@/constants";
 import { getImageById } from "@/lib/actions/image.actions";
-import { getImageSize } from "@/lib/utils";
-import { DeleteConfirmation } from "@/components/shared/DeleteConfirmation";
+import { notFound, redirect } from "next/navigation";
 
 const ImageDetails = async ({ params }: SearchParamProps) => {
   const { id } = await params;
-  const { userId } = await auth();
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) redirect("/sign-in");
 
   const image = await getImageById(id);
+  if (!image) notFound();
+
+  if (String(image.author?._id) !== userId) notFound();
+
+  const transformation =
+    transformationTypes[image.transformationType as TransformationTypeKey];
+  if (!transformation) notFound();
 
   return (
-    <>
-      <Header title={image.title} />
+    <div className="space-y-6 pb-10">
+      <TransformationPageHeader
+        title={image.title}
+        subtitle="Compare the source with the finished transformation and review the settings used."
+        icon={transformation.icon}
+        mode="Result"
+      />
 
-      <section className="mt-5 flex flex-wrap gap-4">
-        <div className="p-14-medium md:p-16-medium flex gap-2">
-          <p className="text-dark-600">Transformation:</p>
-          <p className=" capitalize text-purple-400">
-            {image.transformationType}
-          </p>
-        </div>
+      <TransformationMetadata
+        transformation={image.transformationType}
+        prompt={image.prompt}
+        color={image.color}
+        aspectRatio={image.aspectRatio}
+      />
 
-        {image.prompt && (
-          <>
-            <p className="hidden text-dark-400/50 md:block">&#x25CF;</p>
-            <div className="p-14-medium md:p-16-medium flex gap-2 ">
-              <p className="text-dark-600">Prompt:</p>
-              <p className=" capitalize text-purple-400">{image.prompt}</p>
-            </div>
-          </>
-        )}
-
-        {image.color && (
-          <>
-            <p className="hidden text-dark-400/50 md:block">&#x25CF;</p>
-            <div className="p-14-medium md:p-16-medium flex gap-2">
-              <p className="text-dark-600">Color:</p>
-              <p className=" capitalize text-purple-400">{image.color}</p>
-            </div>
-          </>
-        )}
-
-        {image.aspectRatio && (
-          <>
-            <p className="hidden text-dark-400/50 md:block">&#x25CF;</p>
-            <div className="p-14-medium md:p-16-medium flex gap-2">
-              <p className="text-dark-600">Aspect Ratio:</p>
-              <p className=" capitalize text-purple-400">{image.aspectRatio}</p>
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className="mt-10 border-t border-dark-400/15">
-        <div className="transformation-grid">
-          {/* MEDIA UPLOADER */}
-          <div className="flex flex-col gap-4">
-            <h3 className="h3-bold text-dark-600">Original</h3>
-
-            <Image
-              width={getImageSize(image.transformationType, image, "width")}
-              height={getImageSize(image.transformationType, image, "height")}
-              src={image.secureURL}
-              alt="image"
-              className="transformation-original_image"
-            />
-          </div>
-
-          {/* TRANSFORMED IMAGE */}
+      <section className="rounded-[28px] bg-white/55 p-4 shadow-[0_24px_65px_rgba(43,54,116,0.09)] ring-1 ring-inset ring-white/80 backdrop-blur-2xl sm:p-6">
+        <div className="grid min-h-[420px] grid-cols-1 gap-6 lg:grid-cols-2">
+          <OriginalImagePanel image={image} />
           <TransformedImage
             image={image}
             type={image.transformationType}
@@ -83,20 +52,10 @@ const ImageDetails = async ({ params }: SearchParamProps) => {
             hasDownload={true}
           />
         </div>
-
-        {userId === image.author.clerkId && (
-          <div className="mt-4 space-y-4">
-            <Button asChild type="button" className="submit-button capitalize">
-              <Link href={`/transformations/${image._id}/update`}>
-                Update Image
-              </Link>
-            </Button>
-
-            <DeleteConfirmation imageId={image._id} />
-          </div>
-        )}
       </section>
-    </>
+
+      <TransformationDetailActions imageId={image._id} />
+    </div>
   );
 };
 
