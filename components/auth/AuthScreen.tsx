@@ -12,14 +12,14 @@ export default function AuthScreen({ mode }: { mode: AuthMode }) {
     <main className="grid min-h-screen bg-[#fbfaf8] text-[#151311] lg:grid-cols-2">
       <AuthShowcase />
 
-      <section className="grid min-h-screen place-items-center px-5 py-9 sm:px-12">
+      <section className="flex min-h-screen items-start justify-center px-4 py-6 sm:items-center sm:px-12 sm:py-9">
         <div className="w-full max-w-[420px]">
-          <BrandLogo className="mb-16 inline-flex lg:hidden" />
+          <BrandLogo className="mb-10 w-fit lg:hidden sm:mb-14" />
 
-          <span className="text-[10px] font-bold tracking-[1.5px] text-[#0876df]">
+          <p className="block text-[10px] font-bold tracking-[1.5px] text-[#0876df]">
             {isSignUp ? "CREATE YOUR ACCOUNT" : "WELCOME BACK"}
-          </span>
-          <h2 className="mb-2 mt-3 text-4xl font-bold tracking-[-2px]">
+          </p>
+          <h2 className="mb-2 mt-3 text-[32px] font-bold leading-[1.05] tracking-[-1.6px] sm:text-4xl sm:tracking-[-2px]">
             {isSignUp ? "Start creating for free." : "Good to see you again."}
           </h2>
           <p className="text-[13px] text-[#746f69]">
